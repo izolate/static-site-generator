@@ -1,0 +1,17 @@
+{% extends "./base.njk" %}
+
+{% block body %}
+  <section>
+    <header>
+      <h1>Blog</h1>
+    </header>
+
+    <ol>
+    {% for post in posts %}
+      <li>
+        <a href="{{ post.slug }}">{{ post.title }}</a>
+      </li>
+    {% endfor %}
+    </ol>
+  <section>
+{% endblock %}

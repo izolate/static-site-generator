@@ -1,0 +1,15 @@
+{% extends "./base.njk" %}
+
+{% block body %}
+  <article>
+    <header>
+      <h1>{{ title }}</h1>
+    </header>
+    <div class="markdown-body">
+      {{ body | safe }}
+    </div>
+  </article>
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+  <script>window.hljs.initHighlightingOnLoad();</script>
+{% endblock %}
