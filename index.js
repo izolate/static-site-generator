@@ -13,9 +13,9 @@ const postsDirPath = path.resolve(__dirname, 'posts');
 // Store a reference path to the destination directory.
 const publicDirPath = path.resolve(__dirname, 'public');
 
-// getTemplatePath resolves a path to the HTML template.
+// getTemplatePath creates a file path to an HTML template file.
 const getTemplatePath = name =>
-  path.resolve(__dirname, 'templates', `${name}.njk`);
+  path.resolve(__dirname, 'templates', path.format({ name, ext: '.njk' }));
 
 // emptyDir deletes a directory and re-creates it.
 const emptyDir = async dirPath => {
@@ -30,7 +30,7 @@ const emptyDir = async dirPath => {
 const parsePost = (fileName, fileData) => {
   // Strip the extension from the file name to get a slug.
   const slug = path.basename(fileName, '.md');
-  // Split the file content into the front matter (meta) and post body.
+  // Split the file content into the front matter (attributes) and post body.
   const { attributes, body } = frontMatter(fileData);
 
   return { ...attributes, body, slug };
