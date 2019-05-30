@@ -1,6 +1,5 @@
 const fs = require('fs').promises;
 const path = require('path');
-const del = require('del');
 const frontMatter = require('front-matter');
 const remark = require('remark');
 const remarkHTML = require('remark-html');
@@ -17,12 +16,6 @@ const publicDirPath = path.resolve(__dirname, 'public');
 const getTemplatePath = name =>
   path.resolve(__dirname, 'templates', path.format({ name, ext: '.njk' }));
 
-// emptyDir deletes a directory and re-creates it.
-const emptyDir = async dirPath => {
-  await del(dirPath);
-  await fs.mkdir(dirPath, { recursive: true });
-};
-
 /**
  * parsePost consumes the file name and file content and returns a post
  * object with separate front matter (meta), post body and slug.
@@ -37,23 +30,53 @@ const parsePost = (fileName, fileData) => {
 };
 
 /**
- * getPosts lists and reads all the Markdown files in a directory,
- * any files in sub-directories are ignored for simplicity's sake.
+ * getFiles returns a list of all files in a directory path {dirPath}
+ * that match a given file extension {fileExt} (optional).
  */
-const getPosts = async dirPath => {
+const getFiles = async (dirPath, fileExt = '') => {
   // List all the entries in the directory.
   const dirents = await fs.readdir(dirPath, { withFileTypes: true });
 
-  // Get a list of all Markdown files, omitting any sub-directories.
-  const fileNames = dirents
-    .filter(dirent => dirent.isFile())
-    .filter(dirent => dirent.name.toLowerCase().endsWith('.md'))
-    .map(dirent => dirent.name);
+  return (
+    dirents
+      // Omit any sub-directories.
+      .filter(dirent => dirent.isFile())
+      // Ensure the file extension matches a given extension (optional).
+      .filter(dirent =>
+        fileExt.length ? dirent.name.toLowerCase().endsWith(fileExt) : true
+      )
+      // Return a list of file names.
+      .map(dirent => dirent.name)
+  );
+};
 
-  // Asynchronously read all the file contents.
+// removeFiles deletes all files in a directory that match a file extension.
+const removeFiles = async (dirPath, ext) => {
+  // Get a list of all files in the directory.
+  const fileNames = await getFiles(dirPath, ext);
+
+  // Create a list of files to remove.
+  const filesToRemove = fileNames.map(fileName =>
+    fs.unlink(path.resolve(dirPath, fileName))
+  );
+
+  return Promise.all(filesToRemove);
+};
+
+/**
+ * getPosts lists and reads all the Markdown files in the posts directory,
+ * returning a list of post objects after parsing the file contents.
+ */
+const getPosts = async dirPath => {
+  // Get a list of all Markdown files in the directory.
+  const fileNames = await getFiles(dirPath, '.md');
+
+  // Create a list of files to read.
   const filesToRead = fileNames.map(fileName =>
     fs.readFile(path.resolve(dirPath, fileName), 'utf-8')
   );
+
+  // Asynchronously read all the file contents.
   const fileData = await Promise.all(filesToRead);
 
   return fileNames.map((fileName, i) =>
@@ -114,8 +137,8 @@ const createIndexFile = async posts => {
 
 // build runs the static site generator.
 const build = async () => {
-  // Ensure destination directory exists and is empty.
-  await emptyDir(publicDirPath);
+  // Delete any previously-generated HTML files in the public directory.
+  await removeFiles(publicDirPath, '.html');
 
   // Get all the Markdown files in the posts directory.
   const posts = await getPosts(postsDirPath);
