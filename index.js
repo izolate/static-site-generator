@@ -12,23 +12,6 @@ const postsDirPath = path.resolve(__dirname, 'posts');
 // Store a reference path to the destination directory.
 const publicDirPath = path.resolve(__dirname, 'public');
 
-// getTemplatePath creates a file path to an HTML template file.
-const getTemplatePath = name =>
-  path.resolve(__dirname, 'templates', path.format({ name, ext: '.njk' }));
-
-/**
- * parsePost consumes the file name and file content and returns a post
- * object with separate front matter (meta), post body and slug.
- */
-const parsePost = (fileName, fileData) => {
-  // Strip the extension from the file name to get a slug.
-  const slug = path.basename(fileName, '.md');
-  // Split the file content into the front matter (attributes) and post body.
-  const { attributes, body } = frontMatter(fileData);
-
-  return { ...attributes, body, slug };
-};
-
 /**
  * getFiles returns a list of all files in a directory path {dirPath}
  * that match a given file extension {fileExt} (optional).
@@ -64,6 +47,19 @@ const removeFiles = async (dirPath, fileExt) => {
 };
 
 /**
+ * parsePost consumes the file name and file content and returns a post
+ * object with separate front matter (meta), post body and slug.
+ */
+const parsePost = (fileName, fileData) => {
+  // Strip the extension from the file name to get a slug.
+  const slug = path.basename(fileName, '.md');
+  // Split the file content into the front matter (attributes) and post body.
+  const { attributes, body } = frontMatter(fileData);
+
+  return { ...attributes, body, slug };
+};
+
+/**
  * getPosts lists and reads all the Markdown files in the posts directory,
  * returning a list of post objects after parsing the file contents.
  */
@@ -96,6 +92,10 @@ const markdownToHTML = text =>
         err ? reject(err) : resolve(file.contents)
       )
   );
+
+// getTemplatePath creates a file path to an HTML template file.
+const getTemplatePath = name =>
+  path.resolve(__dirname, 'templates', path.format({ name, ext: '.njk' }));
 
 /**
  * createPostFile generates a new HTML page from a template and saves the file.
