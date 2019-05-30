@@ -51,9 +51,9 @@ const getFiles = async (dirPath, fileExt = '') => {
 };
 
 // removeFiles deletes all files in a directory that match a file extension.
-const removeFiles = async (dirPath, ext) => {
+const removeFiles = async (dirPath, fileExt) => {
   // Get a list of all files in the directory.
-  const fileNames = await getFiles(dirPath, ext);
+  const fileNames = await getFiles(dirPath, fileExt);
 
   // Create a list of files to remove.
   const filesToRemove = fileNames.map(fileName =>
@@ -79,9 +79,7 @@ const getPosts = async dirPath => {
   // Asynchronously read all the file contents.
   const fileData = await Promise.all(filesToRead);
 
-  return fileNames.map((fileName, i) =>
-    parsePost(fileName, fileData[i].toString())
-  );
+  return fileNames.map((fileName, i) => parsePost(fileName, fileData[i]));
 };
 
 /**
