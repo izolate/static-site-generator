@@ -1,0 +1,41 @@
+{
+  "name": "static-site-generator",
+  "version": "1.0.0",
+  "description": "Build your own static site generator (because why not?)",
+  "main": "index.js",
+  "scripts": {
+    "build": "node .",
+    "start": "serve ./public",
+    "fmt": "npx prettier --single-quote --write '**/*.js'"
+  },
+  "keywords": [
+    "static",
+    "site",
+    "generator",
+    "blog",
+    "post",
+    "izolate"
+  ],
+  "author": "izolate <izolate@gmail.com>",
+  "license": "Unlicense",
+  "dependencies": {
+    "front-matter": "^3.0.2",
+    "nunjucks": "^3.2.0",
+    "remark": "^10.0.1",
+    "remark-highlight.js": "^5.1.0",
+    "remark-html": "^9.0.0",
+    "remark-slug": "^5.1.1"
+  },
+  "devDependencies": {
+    "prettier": "^1.17.1",
+    "serve": "^11.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/izolate/static-site-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/izolate/static-site-generator/issues"
+  },
+  "homepage": "https://github.com/izolate/static-site-generator#readme"
+}
