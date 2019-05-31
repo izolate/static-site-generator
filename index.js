@@ -150,8 +150,8 @@ const build = async () => {
 
   // Generate a page with a list of posts.
   await createIndexFile(
-    // Sort created posts by publish date.
-    createdPosts.sort((a, b) => new Date(a.date) - new Date(b.date))
+    // Sort created posts by publish date (newest first).
+    createdPosts.sort((a, b) => new Date(b.date) - new Date(a.date))
   );
 
   return createdPosts;
