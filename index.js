@@ -135,6 +135,8 @@ const createIndexFile = async posts => {
 
 // build runs the static site generator.
 const build = async () => {
+  // Ensure the public directory exists.
+  await fs.mkdir(publicDirPath, { recursive: true });
   // Delete any previously-generated HTML files in the public directory.
   await removeFiles(publicDirPath, '.html');
 
